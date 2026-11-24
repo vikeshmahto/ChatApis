@@ -106,12 +106,30 @@ Common statuses are `400` for invalid input, `403` for a failed membership/owner
 
 `GET /health`
 
-Checks that the Express server is running. It does not check database connectivity.
+Checks that the API can reach PostgreSQL and Firebase Firestore. Each dependency is checked independently.
 
-Success (`200 OK`):
+Success (`200 OK`) means both services responded:
 
 ```json
-{ "status": "ok" }
+{
+  "status": "ok",
+  "checks": {
+    "database": "ok",
+    "firestore": "ok"
+  }
+}
+```
+
+If either service is unreachable, the endpoint responds with `503 Service Unavailable` and marks the failed check as `error`:
+
+```json
+{
+  "status": "error",
+  "checks": {
+    "database": "ok",
+    "firestore": "error"
+  }
+}
 ```
 
 ### Create or get a direct chat
